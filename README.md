@@ -12,7 +12,7 @@ cd pymol-cliques-analysis
 ## Run
 
 ```
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 python3 run.py --clique_number=[0..n] --clique_json_path=[some path]
 ```
 
