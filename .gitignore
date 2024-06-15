@@ -1,0 +1,7 @@
+bin
+lib
+pdb_files
+.idea
+.Python
+cliques_loading.pml
+pyvenv.cfg
