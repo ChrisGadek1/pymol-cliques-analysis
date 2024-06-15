@@ -10,7 +10,7 @@ cd pymol-cliques-analysis
 ```
 
 ## Run
-(remember to set up virtual environment first)
+(remember to set up virtual environment first and be sure Pymol is installed and available directly from command "pymol")
 ```
 pip3 install -r requirements.txt
 python3 run.py --clique_number=[0..n] --clique_json_path=[some path]
