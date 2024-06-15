@@ -9,12 +9,17 @@ import argparse
 parser=argparse.ArgumentParser()
 
 parser.add_argument("--clique_number", help="Number of cliques proteins, which will be loaded to a pymol")
+parser.add_argument("--clique_json_path", help="Path to json file containing ids of uniprot proteins involved in cliques")
+
 
 args=parser.parse_args()
+clique_json_path = args.clique_json_path if args.clique_json_path is not None else "./bacteria_eukaryota_viruses_cliques.json"
+
 
 def load_json_file():
-    with open("./bacteria_eukaryota_viruses_cliques.json", "r") as open_file:
+    with open(clique_json_path, "r") as open_file:
         return json.load(open_file)
+
 
 def get_protein(uniprot_accession):
     api_endpoint = "https://alphafold.ebi.ac.uk/api/prediction/"
@@ -27,12 +32,14 @@ def get_protein(uniprot_accession):
     else:
         response.raise_for_status()
 
+
 def prepare_script(clique_number):
     set_grid = "set grid_mode,1"
     cliques_files_directory_path = os.path.abspath("./pdb_files/clique_"+clique_number)
     load_files = ["load "+os.path.join(cliques_files_directory_path, file) for file in os.listdir(cliques_files_directory_path)]
     with open("cliques_loading.pml", "w") as new_script:
         new_script.write('\n'.join([set_grid] + load_files))
+
 
 cliques_uniprot_ids = load_json_file()
 stats = {'failed': 0, 'succeed': 0}
