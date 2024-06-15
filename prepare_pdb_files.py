@@ -35,7 +35,7 @@ def get_protein(uniprot_accession):
 
 def prepare_script(clique_number):
     set_grid = "set grid_mode,1"
-    cliques_files_directory_path = os.path.abspath("./pdb_files/clique_"+clique_number)
+    cliques_files_directory_path = os.path.abspath("./pdb_files/"+str(hash(clique_json_path))+"/clique_"+clique_number)
     load_files = ["load "+os.path.join(cliques_files_directory_path, file) for file in os.listdir(cliques_files_directory_path)]
     with open("cliques_loading.pml", "w") as new_script:
         new_script.write('\n'.join([set_grid] + load_files))
@@ -45,7 +45,7 @@ cliques_uniprot_ids = load_json_file()
 stats = {'failed': 0, 'succeed': 0}
 for index, clique in enumerate(cliques_uniprot_ids['bacteria_eukaryota_viruses']):
     print("clique", index)
-    clique_directory_path = "./pdb_files/clique_"+str(index)
+    clique_directory_path = "./pdb_files/"+str(hash(clique_json_path))+"/clique_"+str(index)
     if not os.path.exists(clique_directory_path):
         os.makedirs(clique_directory_path)
         for clique_element in clique:
