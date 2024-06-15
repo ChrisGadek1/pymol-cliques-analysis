@@ -18,8 +18,8 @@ python3 run.py --clique_number=[0..n] --clique_json_path=[some path]
 
 Loaded clique and cliques group can be adjusted by changing named arguments: `cliques_number` and `cliques_json_path`.
 
-In example, loading 5-th clique from Archaea-Bacteria-Eukaryota group can be loaded with this command:
+In example, loading a clique with id 1 (second, because the cliques are indexed from 0) from Archaea-Bacteria-Eukaryota group can be loaded with this command:
 
 ```
-python3 run.py --clique_number=5 --clique_json_path="./archaea_bacteria_viruses_cliques.json"
+python3 run.py --clique_number=1 --clique_json_path="./archaea_bacteria_viruses_cliques.json"
 ```
