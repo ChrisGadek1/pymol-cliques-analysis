@@ -48,12 +48,24 @@ def get_protein(uniprot_accession):
 cliques_uniprot_ids = load_json_file()
 cliques = list(cliques_uniprot_ids.values())[0]
 
+def protein_structure_exists(uniprot_code):
+    cliques_files_directory_path = os.path.abspath("./pdb_files/" + encode_path(clique_json_path) + "/clique_" + clique_number)
+    return os.path.isfile(cliques_files_directory_path + "/" + uniprot_code + ".pdb")
+
+def get_only_existing_proteins(clique):
+    res = []
+    for clique_element in clique:
+        if protein_structure_exists(clique_element["id"]):
+            res.append(clique_element)
+    return res
+
 def prepare_script(clique_number):
     set_grid = "set grid_mode,1"
     cliques_files_directory_path = os.path.abspath("./pdb_files/"+encode_path(clique_json_path)+"/clique_"+clique_number)
     load_files = ["load "+os.path.join(cliques_files_directory_path, file) for file in os.listdir(cliques_files_directory_path)]
-    align_proteins = [f'align {cliques[int(clique_number)][i]["id"]}, {cliques[int(clique_number)][-1]["id"]}' for i in range(len(cliques[int(clique_number)]) - 1)]
-    color_proteins = [f'color {superkingdom_colors[clique_element["superkingdom"]]}, {clique_element["id"]}' for clique_element in cliques[int(clique_number)]]
+    clique_existing_elements = get_only_existing_proteins(cliques[int(clique_number)])
+    align_proteins = [f'align {clique_existing_elements[i]["id"]}, {clique_existing_elements[-1]["id"]}' for i in range(len(clique_existing_elements) - 1)]
+    color_proteins = [f'color {superkingdom_colors[clique_element["superkingdom"]]}, {clique_element["id"]}' for clique_element in clique_existing_elements]
     with open("cliques_loading.pml", "w") as new_script:
         new_script.write('\n'.join([set_grid] + load_files + align_proteins + color_proteins))
 
