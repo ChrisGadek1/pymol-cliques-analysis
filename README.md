@@ -1,6 +1,12 @@
 # Pymol analysis of semi-homogeneous cliques
 
-(Part of master thesis)
+(Part of my master thesis)
+
+All proteins in cliques are aligned to the last element of a clique. They are also colored by their taxonomy: 
+- red - Viruses
+- blue - Bacteria
+- gold - Archaea
+- green - Eukaryota
 
 ## Instalation
 
