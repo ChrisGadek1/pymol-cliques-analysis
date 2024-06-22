@@ -17,6 +17,12 @@ parser.add_argument("--clique_json_path", help="Path to json file containing ids
 args=parser.parse_args()
 clique_json_path = args.clique_json_path if args.clique_json_path is not None else "./bacteria_eukaryota_viruses_cliques.json"
 
+superkingdom_colors = {
+    "Bacteria": "0xfcba03",
+    "Archaea": "0x2260f2",
+    "Eukaryota": "0x02fa34",
+    "Viruses": "0xfa020b"
+}
 
 def encode_path(path):
     return base64.b64encode(path.encode("ascii")).decode("ascii")
@@ -46,9 +52,10 @@ def prepare_script(clique_number):
     set_grid = "set grid_mode,1"
     cliques_files_directory_path = os.path.abspath("./pdb_files/"+encode_path(clique_json_path)+"/clique_"+clique_number)
     load_files = ["load "+os.path.join(cliques_files_directory_path, file) for file in os.listdir(cliques_files_directory_path)]
-    align_proteins = [f'align {cliques[int(clique_number)][i]}, {cliques[int(clique_number)][-1]}' for i in range(len(cliques[int(clique_number)]) - 1)]
+    align_proteins = [f'align {cliques[int(clique_number)][i]["id"]}, {cliques[int(clique_number)][-1]["id"]}' for i in range(len(cliques[int(clique_number)]) - 1)]
+    color_proteins = [f'color {superkingdom_colors[clique_element["superkingdom"]]}, {clique_element["id"]}' for clique_element in cliques[int(clique_number)]]
     with open("cliques_loading.pml", "w") as new_script:
-        new_script.write('\n'.join([set_grid] + load_files + align_proteins))
+        new_script.write('\n'.join([set_grid] + load_files + align_proteins + color_proteins))
 
 
 stats = {'failed': 0, 'succeed': 0}
@@ -59,10 +66,10 @@ for index, clique in enumerate(tqdm(list(cliques_uniprot_ids.values())[0])):
         os.makedirs(clique_directory_path)
         for clique_element in clique:
             try:
-                protein_info = get_protein(clique_element)
+                protein_info = get_protein(clique_element["id"])
                 pdb_url = protein_info[0].get('pdbUrl')
                 pdb_data = requests.get(pdb_url).text
-                with open(clique_directory_path+"/"+clique_element+".pdb", "w") as new_pdb_file:
+                with open(clique_directory_path+"/"+clique_element["id"]+".pdb", "w") as new_pdb_file:
                     new_pdb_file.write(pdb_data)
                 stats['succeed'] += 1
             except:
