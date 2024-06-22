@@ -39,15 +39,18 @@ def get_protein(uniprot_accession):
         response.raise_for_status()
 
 
+cliques_uniprot_ids = load_json_file()
+cliques = list(cliques_uniprot_ids.values())[0]
+
 def prepare_script(clique_number):
     set_grid = "set grid_mode,1"
     cliques_files_directory_path = os.path.abspath("./pdb_files/"+encode_path(clique_json_path)+"/clique_"+clique_number)
     load_files = ["load "+os.path.join(cliques_files_directory_path, file) for file in os.listdir(cliques_files_directory_path)]
+    align_proteins = [f'align {cliques[int(clique_number)][i]}, {cliques[int(clique_number)][-1]}' for i in range(len(cliques[int(clique_number)]) - 1)]
     with open("cliques_loading.pml", "w") as new_script:
-        new_script.write('\n'.join([set_grid] + load_files))
+        new_script.write('\n'.join([set_grid] + load_files + align_proteins))
 
 
-cliques_uniprot_ids = load_json_file()
 stats = {'failed': 0, 'succeed': 0}
 print("Fetching PDB files")
 for index, clique in enumerate(tqdm(list(cliques_uniprot_ids.values())[0])):
